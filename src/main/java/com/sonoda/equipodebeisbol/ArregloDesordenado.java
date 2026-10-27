@@ -1,6 +1,10 @@
 
 package com.sonoda.equipodebeisbol;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
+
 
 public class ArregloDesordenado<T>{
     private T[] listaDesordenada;
@@ -13,26 +17,58 @@ public class ArregloDesordenado<T>{
         this.top = 0;
     }
     
-    public void insertar(T object){
+    public String mostrar(){
+        if (!estaVacio()){
+            for(T element : this.listaDesordenada){
+                IO.println(element.toString());
+            }
+        }
+        return "Arreglo vacio.";
+    }
+    
+    public boolean insertar(T object){
         if (!estaLleno()){
+            for(T element : listaDesordenada){
+                if (element.equals(object)){
+                    return false;
+                }
+            }
             this.listaDesordenada[top] = object;
             top++;
+            return true;
+        }else{
+            return false;
         }
     }
     
-    public void eliminar(int index){
-        if(!estaVacio()){
-            int i;
-            for(i = 0; i < top; i++){
-                if (index == i || index <= i){
-                    listaDesordenada[i] = listaDesordenada[i++];
+    public void ordenar(Comparator<? super T> criterio){
+        Objects.requireNonNull(criterio, "¡El critorio es obligatorio!");
+        T auxiliar;
+        for(int i = 0;  i <= top - 2; i++){
+            for(int k = i; k < top -1; k++){
+                if(criterio.compare(this.listaDesordenada[k], this.listaDesordenada[k++]) > 0){
+                   auxiliar = this.listaDesordenada[k];
+                   this.listaDesordenada[k] = this.listaDesordenada[k++];
+                   this.listaDesordenada[k++] = auxiliar;
                 }
-            }
-            if ( ++i == top ){
-                top--;
             }
         }
     }
+    
+    public boolean eliminar(int index){
+        if(!estaVacio()){
+            for(int i = 0; i < top; i++){
+                if (index == i ){
+                    for(int k = i; k < top - 1 ; k++){
+                        listaDesordenada[k] = listaDesordenada[k++];
+                    }
+                    top--;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }    
     
     public void elminarTodo(){
         if (!estaVacio()){
@@ -41,7 +77,7 @@ public class ArregloDesordenado<T>{
     }
     
     private boolean estaLleno(){
-        return top == (max - 1);
+        return top == (max);
     }
     
     private boolean estaVacio(){
